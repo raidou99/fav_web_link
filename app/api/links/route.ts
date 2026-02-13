@@ -8,8 +8,17 @@ const SHEET_NAME = "Sheet1";
 function getAuth() {
   let privateKey = process.env.GOOGLE_PRIVATE_KEY || "";
   
+  // Check if the key is base64 encoded (recommended for Vercel)
+  if (!privateKey.includes("BEGIN PRIVATE KEY")) {
+    try {
+      privateKey = Buffer.from(privateKey, "base64").toString("utf-8");
+    } catch (e) {
+      // If decoding fails, assume it's already in the correct format
+    }
+  }
+  
   // Handle both formats: literal \n and actual newlines
-  if (!privateKey.includes("\n")) {
+  if (privateKey.includes("\\n")) {
     privateKey = privateKey.replace(/\\n/g, "\n");
   }
   
